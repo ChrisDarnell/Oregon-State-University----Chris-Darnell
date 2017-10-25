@@ -1,0 +1,28 @@
+{
+  "name": "final_project",
+  "version": "0.0.1",
+  "description": "Final Project - Batman Database",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "database"
+  ],
+  "author": "Chris Darnell", "Brian Wiltse"
+  "license": "OSU",
+  "bugs": {
+    "url": "https://"
+  },
+  "homepage": "https://",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "mysql": "^2.11.1"
+  }
+}

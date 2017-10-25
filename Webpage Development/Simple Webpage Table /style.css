@@ -1,0 +1,25 @@
+
+tbody tr:nth-of-type(odd){
+  background-color: red;
+}
+
+tbody tr:nth-of-type(even){
+  background-color: yellow;
+}
+
+div.outer-content {
+background-color: #FFC0CB;
+margin: 20px;
+padding: 10px;
+width: 75%;
+position: relative;
+}
+
+
+div.inner-content {
+
+    background-color: #0000FF;
+    width: 75%;
+    text-align:center;
+    margin: 0 auto;
+  }

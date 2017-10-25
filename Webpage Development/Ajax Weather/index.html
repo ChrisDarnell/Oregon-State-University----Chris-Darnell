@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+
+<body>
+
+    <!-- Form that connects to Open Weather Map, lets a user input a city or a
+    zip code and asynchronously shows the weather information retrieved from Open Weather Map -->
+
+<form>
+    <fieldset>
+
+        <legend>Open Weather Application</legend>
+        <label for="zipCode">Zip:</label>
+        <input type="text" name="zipCode" id="zipCode">
+        <br/>
+        <label for="city">City:</label>
+        <input type="text" name="city" id="city">
+        <br/>
+        <input type="submit" id="weatherSubmit">
+    </fieldset>
+
+    <span>Your Weather:</span>
+    <p>City: <span id="cityName"></span></p>
+    <p>Current Temp (K): <span id="currentTemp"></span></p>
+    <p>Humidity: <span id="humidity"></span></p>
+    <p><span id="weatherError"></span></p>
+</form>
+
+<!-- a form that submits to http://httpbin.org/post. -->
+<form id="httpbinForm">
+    <fieldset>
+
+        <legend>HttpBin</legend>
+        <textarea name="httpbinInput" form="httpbinForm" id="httpbinInputField"></textarea>
+        <br/>
+        <input type="submit" id="httpbinSubmit"/>
+    </fieldset>
+
+    <p>Response:</p>
+    <span id="httpbinResponse"></span>
+</form>
+
+</body>
+
+<script src="app.js" type="application/javascript"></script>
+<script src="openweather.js" type="application/javascript"></script>
+<script src="httpbin.js" type="application/javascript"></script>
+
+</html>

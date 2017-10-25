@@ -1,0 +1,296 @@
+#!/bin/bash 
+
+# Chris Darnell
+# CS 344(400) - Operating Systems
+# Program 1 - stats
+# 1/30/2016
+
+# Description: a bash shell script to calculate mean averages 
+# and medians of numbers that can be input to your script from 
+# either a file or via stdin.
+
+# Functions for median/average/read input from file/making columns and rows 
+
+# Array loops help: https://www.cyberciti.biz/faq/bash-for-loop-array/
+
+# Error:m: cannot remove `assign1.test.12681/.nfs00000000110cae2700000d95': Device or resource busy
+
+
+
+
+
+
+
+
+
+
+# Your script must be called simply "stats". The general format of 
+# the stats command is:
+# stats {-rows|-cols} [input_file]
+
+
+# Be sure any temporary file you create uses the process id as part of its name, 
+# so that there will not be conflicts if the stats program is running more than 
+# once
+
+tempFile="temp$$"
+
+# You should also use the trap command to catch interrupt, hangup, and terminate 
+# signals to remove the temporary files if the stats program is terminated 
+# unexpectedly.
+
+trap "rm -f $tempFile" INT HUP TERM EXIT
+
+# You must check for the right number and format of arguments to stats
+
+# If the command has too many or two few arguments or if the arguments of the 
+# wrong format you should output an error message to standard error.  You should 
+# also output an error message to stderr if an input file is specified, but is not 
+# eadable.
+
+if [ $# -gt 2 -o $# -lt 1 ]
+then
+	echo "Usage: stats {-rows|-cols} [input_file]" 1>&2
+	exit 1
+
+# If you specify input_file the data is read from that file; otherwise, 
+# it is read from stdin
+
+elif [ $# -eq 1 ]
+then
+	cat > "$tempFile"
+
+
+else
+	tempFile=$2
+
+fi
+
+# You should also output an error message to stderr if an input file is specified, but is not readable
+
+if [ ! -r $2 ]
+then
+	echo "stats: File can't be read." 1>&2
+	exit 1
+fi
+
+# If a specified input file is empty, this is not an error: do not output any 
+# numbers or statistics. In this event, either send an informational message to 
+# stderr and exit, or just exit
+
+if [ ! -s $2 ]
+then 
+	echo "Nothing in file."
+	exit 0
+fi
+
+# Program should let user choose rows or columns
+
+# User selects rows...
+
+
+if [[ $1 == -r* ]]
+then
+	echo "Average	Median"
+
+# Read numbers from input file
+
+	while read line
+	do
+		savedNummbers=("${savedNummbers[@]}" $line)
+
+# Variables
+
+
+		numberElements=0
+		sum=0
+		midValue=0
+		median=0
+		average=0
+
+# Loop through to get count for average calc
+	
+
+		for i in "${savedNummbers[@]}"
+		do
+			sum=`expr $sum + $i`
+			numberElements=`expr $numberElements + 1`	
+	
+		done
+
+
+
+		if  [[ "$numberElements" -eq "0" ]]
+		then
+			exit 0
+		fi
+				
+
+
+# To calculate the median, sort the values and take the midValue value.
+
+		savedNummbers=($(for i in "${savedNummbers[@]}"; do echo "$i"; done | sort -n))
+
+		
+# one element in array
+
+
+		if [[ "$numberElements" -eq "1" ]]
+		then
+			midValue=0
+		
+# start index at head
+
+
+		else
+			midValue=`expr $numberElements / 2`			
+			sum=`expr $sum + $midValue`			
+
+		fi
+
+
+# Average calculation
+
+# Allow rounding up
+
+# Divides sum of array by no. items in array. 
+
+
+		average=`expr $sum / $numberElements`
+		median=${savedNummbers[$midValue]}
+				
+
+# Print row output
+
+
+		echo "$average	$median"		
+
+# Delete temporary file
+
+		unset savedNummbers
+	done <"$tempFile"
+
+
+# User chooses columns
+
+elif [[ $1 == -c* ]]
+then
+
+# Count no. columns for calc., using head/tail markers from assignment
+
+	columnCount=$(head -n 1 $tempFile | wc -w)
+
+# Read numbers from columns
+
+	for i in $(seq $columnCount)
+	do
+
+# Store numbers in temporary file
+
+		savedNummbers=($(cut -f $i $tempFile| tr "\t" "\n"))
+
+
+# Variables: sum, median, midValue (value), no items
+
+		numberElements=0
+		sum=0
+		midValue=0
+		median=0
+		average=0
+
+
+
+
+# Calculations
+	
+# Loop through to sum array
+
+# Resource used: http://ahmed.amayem.com/bash-arrays-2-different-methods-for-looping-through-an-array/
+
+		for j in "${savedNummbers[@]}"
+		do		
+			sum=`expr $sum + $j`
+			numberElements=`expr $numberElements + 1`
+		done
+
+	
+# Sort values
+
+		savedNummbers=($(for num in "${savedNummbers[@]}"; do echo "$num"; done | sort -n))
+
+		remainder=$(($numberElements % 2))	
+
+# If only one element
+
+
+		if [[ $numberElements -eq 1 ]]
+		then
+			midValue=0
+		
+# Find midValue number by dividing no elements by 2
+
+		else
+			midValue=`expr $numberElements / 2`			
+			sum=`expr $sum + $midValue`			
+
+# Average calc: uses expr
+
+# Divide sum by no in row.
+
+		fi
+		average=`expr $sum / $numberElements`
+		median=${savedNummbers[$midValue]}
+				
+
+# Stores averages and medians
+	
+	savedAverages["$i"]=$average
+	savedMedians["$i"]=$median	
+
+# clean up file 
+
+		unset savedNummbers	
+	done
+
+
+
+
+
+# Print result
+
+# Format taken from grading script
+
+# Spacing modified
+
+	echo "Averages: "
+	for i in "${savedAverages[@]}"
+	do
+		printf '%d  ' "$i"
+	done	
+	
+	printf "\n"
+	echo "Medians:"
+	for i in "${savedMedians[@]}"
+	do
+		printf '%d  ' "$i"
+	done
+
+	printf "\n"
+
+
+
+
+
+
+
+# Error Messaging if everything goes wrong
+
+else
+	echo "Usage: stats {-rows|-cols} [input_file]" 1>&2
+	exit 1
+fi
+
+# exit
+
+exit 0
+
